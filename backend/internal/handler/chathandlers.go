@@ -44,8 +44,6 @@ func (h *Handler) getChat() http.HandlerFunc {
 			h.respondWithError(w, r, http.StatusInternalServerError, err)
 			return
 		}
-		h.respondWithJSON(w, http.StatusOK, map[string]interface{}{
-			"chats": chats,
-		})
+		h.respondWithJSON(w, http.StatusOK, chats)
 	}
 }

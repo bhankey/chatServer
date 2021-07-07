@@ -3,6 +3,7 @@ package postgres
 import (
 	"chatServer/internal/models"
 	"chatServer/pkg/db/sqlstore"
+	"github.com/lib/pq"
 	"time"
 )
 
@@ -39,33 +40,27 @@ func (r *ChatRepo) Create(name string, users []models.User) (id int, err error) 
 func (r *ChatRepo) GetById(chatId int) (chat *models.Chat, err error) {
 	chat = &models.Chat{}
 	row := r.db.QueryRowx("SELECT * FROM chat WHERE id = $1", chatId)
-	if err := row.StructScan(&chat); err != nil {
+	if err := row.Scan(&chat.Id, &chat.Name, &chat.CreatedAt, pq.Array(&chat.UsersId)); err != nil {
 		return nil, err
 	}
 	return chat, nil
 }
 
 func (r *ChatRepo) GetByUserId(userId int) (chats []models.Chat, err error) {
-	rows, err := r.db.Queryx("SELECT Distinct chat_id FROM chat_users INNER JOIN users u on chat_users.user_id = $1", userId)
+	chatIdRows, err := r.db.Queryx("WITH chats AS (SELECT DISTINCT chat.id, chat.name, chat.created_at FROM chat INNER JOIN chat_users INNER JOIN users u ON chat_users.user_id = $1 ON chat.id = chat_users.chat_id), message_time AS (SELECT chat.id as chat_id, max(message.created_at) as latest_message_time FROM chat LEFT JOIN message ON chat.id = message.chatid GROUP BY chat.id), users_agg AS (SELECT chat.id as chat_id, array_agg(c.id) as users FROM chat INNER JOIN chat_users cu on chat.id = cu.chat_id INNER JOIN users c on cu.user_id = c.id GROUP BY chat.id) SELECT chats.id, chats.name, chats.created_at, users_agg.users as usersid FROM chats LEFT JOIN message_time ON chats.id = message_time.chat_id LEFT JOIN users_agg ON users_agg.chat_id = chats.id ORDER BY message_time.latest_message_time DESC NULLS LAST", userId)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	// TODO in progress
+	defer chatIdRows.Close()
+
 	chats = make([]models.Chat, 0)
-	var intrSlice []interface{}
-	for rows.Next() {
+
+	for chatIdRows.Next() {
 		var chat models.Chat
-		var tmp []interface{}
-		if tmp, err = rows.SliceScan(); err != nil {
+		if err := chatIdRows.Scan(&chat.Id, &chat.Name, &chat.CreatedAt, pq.Array(&chat.UsersId)); err != nil {
 			return nil, err
 		}
-		intrSlice = append(intrSlice, tmp...)
 		chats = append(chats, chat)
-	}
-	chatIds := make([]int, len(intrSlice))
-	for i := range intrSlice {
-		chatIds[i] = int(int(intrSlice[i].(int64)))
 	}
 
 	return chats, nil

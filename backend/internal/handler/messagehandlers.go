@@ -28,3 +28,23 @@ func (h *Handler) addMessage() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *Handler) getMessages() http.HandlerFunc {
+	type request struct {
+		ChatId int `json:"chat"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			h.respondWithError(w, r, http.StatusBadRequest, err)
+			return
+		}
+		messages, err := h.service.Message.GetByChatId(req.ChatId)
+		if err != nil {
+			h.respondWithError(w, r, http.StatusInternalServerError, err)
+			return
+		}
+		h.respondWithJSON(w, http.StatusOK, messages)
+	}
+}

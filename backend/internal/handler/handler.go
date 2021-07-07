@@ -60,4 +60,5 @@ func (h *Handler) configureChatsRoutes(r *mux.Router) {
 
 func (h *Handler) configureMessagesRoutes(r *mux.Router) {
 	r.HandleFunc("/add", h.addMessage()).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/get", h.getMessages()).Methods(http.MethodPost, http.MethodOptions)
 }

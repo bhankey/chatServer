@@ -3,9 +3,9 @@ package models
 import "time"
 
 type Message struct {
-	Id        int       `json:"id"`
-	Chat      int       `json:"chat"`
-	Author    int       `json:"author"`
-	Text      string    `json:"text"`
-	CreatedAt time.Time `json:"created_at"`
+	Id        int       `db:"id" json:"id"`
+	Chat      int       `db:"chatid" json:"chat"`
+	Author    int       `db:"author" json:"author"`
+	Text      string    `db:"text" json:"text"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
