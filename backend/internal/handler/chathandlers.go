@@ -41,7 +41,7 @@ func (h *Handler) addChat() http.HandlerFunc {
 // @Produce json
 // @Router /chats/get [post]
 // @Param chat body models.UserId true "user"
-// @Success 200 {object} models.Chat
+// @Success 200 {object} []models.Chat
 func (h *Handler) getChat() http.HandlerFunc {
 	type request struct {
 		UserId int `json:"user"`

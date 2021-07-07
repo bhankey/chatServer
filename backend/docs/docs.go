@@ -80,7 +80,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Chat"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Chat"
+                            }
                         }
                     }
                 }

@@ -112,7 +112,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Chat'
+            items:
+              $ref: '#/definitions/models.Chat'
+            type: array
       summary: get chat
   /messages/add:
     post:
