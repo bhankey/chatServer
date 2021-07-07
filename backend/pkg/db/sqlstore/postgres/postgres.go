@@ -10,7 +10,7 @@ import (
 func NewStore(c *sqlstore.Config) (*sqlstore.Store, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		c.Host, c.Port, c.User, c.Password, c.DBName)
-	db, err := sqlx.Open("pgx", psqlInfo)
+	db, err := sqlx.Connect("pgx", psqlInfo)
 	if err != nil {
 		return nil, err
 	}

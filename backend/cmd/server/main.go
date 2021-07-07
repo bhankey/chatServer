@@ -32,6 +32,10 @@ func parseConfigFile(configPath string) *app.Config {
 	return c
 }
 
+// @title chat server
+// @version 1.0
+// @description small chat server
+
 // main configure and start URLShortener server
 func main() {
 	flag.Parse()

@@ -5,6 +5,13 @@ import (
 	"net/http"
 )
 
+// @Summary new user
+// @Description creates new user
+// @Accept json
+// @Produce json
+// @Router /users/add [post]
+// @Param chat body models.AddUser true "Add user"
+// @Success 200 {object} models.UserId user_id
 func (h *Handler) addUser() http.HandlerFunc {
 	type request struct {
 		UserName string `json:"username"`

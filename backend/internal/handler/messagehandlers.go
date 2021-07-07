@@ -5,6 +5,13 @@ import (
 	"net/http"
 )
 
+// @Summary new message
+// @Description sends new message to chat from user
+// @Accept json
+// @Produce json
+// @Router /messages/add [post]
+// @Param chat body models.AddMessage true "Add message"
+// @Success 200 {object} models.MessageId message_id
 func (h *Handler) addMessage() http.HandlerFunc {
 	type request struct {
 		ChatId int    `json:"chat"`
@@ -29,6 +36,13 @@ func (h *Handler) addMessage() http.HandlerFunc {
 	}
 }
 
+// @Summary get messages
+// @Description get all messages from chat
+// @Accept json
+// @Produce json
+// @Router /messages/get [post]
+// @Param chat body models.ChatIdS true "chat id"
+// @Success 200 {object} []models.Message messages
 func (h *Handler) getMessages() http.HandlerFunc {
 	type request struct {
 		ChatId int `json:"chat"`

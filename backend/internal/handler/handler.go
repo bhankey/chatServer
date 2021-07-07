@@ -1,10 +1,12 @@
 package handler
 
 import (
+	_ "chatServer/docs"
 	"chatServer/internal/logger"
 	"chatServer/internal/service"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
 )
 
@@ -42,6 +44,9 @@ func (h *Handler) configureRoutes() {
 			},
 			),
 		))
+
+	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler())
+
 	h.configureUsersRoutes(r.PathPrefix("/users/").Subrouter())
 	h.configureChatsRoutes(r.PathPrefix("/chats/").Subrouter())
 	h.configureMessagesRoutes(r.PathPrefix("/messages/").Subrouter())

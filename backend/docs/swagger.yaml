@@ -1,0 +1,179 @@
+definitions:
+  models.AddChat:
+    properties:
+      name:
+        type: string
+      users:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.AddMessage:
+    properties:
+      author:
+        type: integer
+      chat:
+        type: integer
+      text:
+        type: string
+    type: object
+  models.AddUser:
+    properties:
+      username:
+        type: string
+    type: object
+  models.Chat:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      users_id:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.ChatId:
+    properties:
+      chat_id:
+        type: integer
+    type: object
+  models.ChatIdS:
+    properties:
+      chat:
+        type: integer
+    type: object
+  models.Message:
+    properties:
+      author:
+        type: integer
+      chat:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      text:
+        type: string
+    type: object
+  models.MessageId:
+    properties:
+      message_id:
+        type: integer
+    type: object
+  models.UserId:
+    properties:
+      user:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: small chat server
+  title: chat server
+  version: "1.0"
+paths:
+  /chats/add:
+    post:
+      consumes:
+      - application/json
+      description: creates new chat
+      parameters:
+      - description: Add chat
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddChat'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ChatId'
+      summary: new chat
+  /chats/get:
+    post:
+      consumes:
+      - application/json
+      description: get chat by user id
+      parameters:
+      - description: user
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Chat'
+      summary: get chat
+  /messages/add:
+    post:
+      consumes:
+      - application/json
+      description: sends new message to chat from user
+      parameters:
+      - description: Add message
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageId'
+      summary: new message
+  /messages/get:
+    post:
+      consumes:
+      - application/json
+      description: get all messages from chat
+      parameters:
+      - description: chat id
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChatIdS'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Message'
+            type: array
+      summary: get messages
+  /users/add:
+    post:
+      consumes:
+      - application/json
+      description: creates new user
+      parameters:
+      - description: Add user
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserId'
+      summary: new user
+swagger: "2.0"
