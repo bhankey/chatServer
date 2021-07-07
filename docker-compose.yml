@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: chatServer
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /store/postgres
+    volumes:
+      - postgres:/store/postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432 # uncomment if you need access to database on your machine e.g for a test
+  migrations:
+    container_name: migrations
+    image: migrate/migrate
+    restart: on-failure
+    depends_on:
+     - postgres
+    volumes:
+      - ./database/migrations:/database
+    command:
+      ["-path", "/database", "-database", "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/chatServer?sslmode=disable", "up"]
+volumes:
+  postgres:

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  postgresTest:
+    container_name: postgresTest
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: chatServerTest
+      POSTGRES_USER: ${POSTGRES_USER:-Tpostgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Tpostgres}
+      PGDATA: /store/postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432 # uncomment if you need access to database on your machine e.g for a test
+  migrationsTest:
+    container_name: migrationsTest
+    image: migrate/migrate
+    restart: on-failure
+    depends_on:
+     - postgresTest
+    volumes:
+      - ../database/migrations:/database
+    command:
+      ["-path", "/database", "-database", "postgres://${POSTGRES_USER:-Tpostgres}:${POSTGRES_PASSWORD:-Tpostgres}@postgresTest:5432/chatServerTest?sslmode=disable", "up"]
