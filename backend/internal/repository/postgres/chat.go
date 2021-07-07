@@ -39,7 +39,7 @@ func (r *ChatRepo) Create(name string, users []models.User) (id int, err error) 
 
 func (r *ChatRepo) GetById(chatId int) (chat *models.Chat, err error) {
 	chat = &models.Chat{}
-	row := r.db.QueryRowx("SELECT * FROM chat WHERE id = $1", chatId)
+	row := r.db.QueryRowx("WITH users_agg AS (SELECT chat.id as chat_id, array_agg(c.id) as users FROM chat INNER JOIN chat_users cu on chat.id = cu.chat_id INNER JOIN users c on cu.user_id = c.id GROUP BY chat.id) SELECT chat.id, chat.name, chat.created_at, users_agg.users FROM chat INNER JOIN users_agg ON chat_id=chat.id WHERE chat.id = $1", chatId)
 	if err := row.Scan(&chat.Id, &chat.Name, &chat.CreatedAt, pq.Array(&chat.UsersId)); err != nil {
 		return nil, err
 	}

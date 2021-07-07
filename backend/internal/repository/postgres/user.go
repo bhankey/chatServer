@@ -26,7 +26,7 @@ func (r *UserRepo) Create(userName string) (id int, err error) {
 func (r *UserRepo) GetById(userId int) (user *models.User, err error) {
 	user = &models.User{}
 	row := r.db.QueryRowx("SELECT * FROM users WHERE id = $1", userId)
-	if err := row.StructScan(&user); err != nil {
+	if err := row.StructScan(user); err != nil {
 		return nil, err
 	}
 	return user, nil

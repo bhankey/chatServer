@@ -3,6 +3,7 @@ package service
 import (
 	"chatServer/internal/models"
 	"chatServer/internal/repository"
+	"fmt"
 )
 
 type ChatService struct {
@@ -16,6 +17,9 @@ func NewChatService(repo repository.Chat) *ChatService {
 }
 
 func (s *ChatService) Create(name string, usersId []int) (id int, err error) {
+	if len(usersId) < 1 {
+		return 0, fmt.Errorf("no users id was recived")
+	}
 	users := make([]models.User, len(usersId))
 	for i, id := range usersId {
 		users[i] = models.User{
@@ -32,10 +36,3 @@ func (s *ChatService) GetById(chatId int) (chat *models.Chat, err error) {
 func (s *ChatService) GetByUserId(userId int) (chats []models.Chat, err error) {
 	return s.repo.GetByUserId(userId)
 }
-
-//type Chat interface {
-//	Create(name string, users []models.User) (id int, err error)
-//	GetById(chatId int) (chat *models.Chat, err error)
-//	GetByUserId(userId int) (chats []models.Chat, err error)
-//	//	AddUsers(chatId int, users []User) err error
-//}
