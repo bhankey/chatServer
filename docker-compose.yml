@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  chatServer:
+    build: backend/.
+    container_name: chatServer
+    image: chat_server
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - 9000:9000
   postgres:
     container_name: postgres
     image: postgres:latest
