@@ -3,10 +3,12 @@ package service
 import (
 	"chatServer/internal/models"
 	"chatServer/internal/repository"
+	"fmt"
 )
 
 type MessageService struct {
-	repo repository.Message
+	messageRepo repository.Message
+	chatRepo    repository.Chat
 }
 
 //type Message interface {
@@ -14,16 +16,31 @@ type MessageService struct {
 //	GetByChatId(chatId int) (messages []models.Message, err error)
 //}
 
-func NewMessageService(repo repository.Message) *MessageService {
+func NewMessageService(message repository.Message, chat repository.Chat) *MessageService {
 	return &MessageService{
-		repo: repo,
+		messageRepo: message,
+		chatRepo:    chat,
 	}
 }
 
-func (s *MessageService) Create(chatId int, userId int, text string) (id int, err error) {
-	return s.repo.Create(chatId, userId, text)
+func (s *MessageService) Create(chatId int, userId int, text string) (int, error) {
+	c, err := s.chatRepo.GetById(chatId)
+	if err != nil {
+		return 0, err
+	}
+	isAllowed := false
+	for uId := range c.UsersId {
+		if uId == userId {
+			isAllowed = true
+			break
+		}
+	}
+	if !isAllowed {
+		return 0, fmt.Errorf("user not allowed to write in this chat")
+	}
+	return s.messageRepo.Create(chatId, userId, text)
 }
 
 func (s *MessageService) GetByChatId(chatId int) (messages []models.Message, err error) {
-	return s.repo.GetByChatId(chatId)
+	return s.messageRepo.GetByChatId(chatId)
 }

@@ -32,6 +32,6 @@ func NewService(repository *repository.Repository) *Service {
 	return &Service{
 		User:    NewUserService(repository.User),
 		Chat:    NewChatService(repository.Chat),
-		Message: NewMessageService(repository.Message),
+		Message: NewMessageService(repository.Message, repository.Chat),
 	}
 }
